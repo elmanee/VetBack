@@ -1,16 +1,24 @@
+// /home/agus/Documentos/VetHealth/VetBack/src/app.js
 const express = require('express');
 const app = express();
-
+const cors = require('cors'); 
 // Middlewares
 app.use(express.json());
 
-// rutas
+// 1. Importar las rutas. Asegúrate de que las rutas son importadas como objetos
 const productoRoutes = require('./routes/producto.routes');
 const loteRoutes = require('./routes/loteProducto.routes');
+const citaRoutes = require('./routes/cita.routes'); 
+const clienteRoutes = require('./routes/cliente.routes');
 
+app.use(cors({
+    origin: 'http://localhost:4200' // Solo permitimos peticiones desde la URL de Angular
+}));
 
 // conexion a las rutas
 app.use('/api/productos', productoRoutes); 
 app.use('/api/lotes', loteRoutes);
+app.use('/api/citas', citaRoutes); 
+app.use('/api/clientes', clienteRoutes);
 
 module.exports = app;
