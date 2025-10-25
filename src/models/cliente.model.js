@@ -28,7 +28,7 @@ const ClienteModel = {
     },
 
     /**
-     * NUEVO: Buscar cliente por ID
+     * Buscar cliente por ID
      */
     findById: async (id) => {
         console.log(`[MODELO CLIENTE] Buscando cliente con ID: ${id}`);
@@ -47,6 +47,37 @@ const ClienteModel = {
             return result.rows[0];
         } catch (error) {
             console.error('[MODELO CLIENTE] Error al buscar cliente:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Obtener mascotas de un cliente por ID
+     */
+    findMascotasByClienteId: async (clienteId) => {
+        console.log(`[MODELO CLIENTE] Buscando mascotas del cliente ID: ${clienteId}`);
+        
+        const query = `
+            SELECT 
+                p.id,
+                p.nombre,
+                p.raza,
+                p.edad,
+                p.peso,
+                a.nombre as tipo_animal,
+                a.id_tipoanimal as animal_id
+            FROM tPacientes p
+            INNER JOIN tAnimales a ON p.animal_id = a.id_tipoanimal
+            WHERE p.cliente_id = $1
+            ORDER BY p.nombre;
+        `;
+        
+        try {
+            const result = await pool.query(query, [clienteId]);
+            console.log(`[MODELO CLIENTE] Se encontraron ${result.rows.length} mascotas`);
+            return result.rows;
+        } catch (error) {
+            console.error('[MODELO CLIENTE] Error al buscar mascotas:', error);
             throw error;
         }
     },
@@ -71,29 +102,6 @@ const ClienteModel = {
             return result.rows[0];
         } catch (error) {
             console.error('[MODELO CLIENTE] Error al crear cliente:', error);
-            throw error;
-        }
-    },
-
-    /**
-     * Obtener mascotas de un cliente
-     */
-    getMascotas: async (clienteId) => {
-        console.log(`[MODELO CLIENTE] Buscando mascotas del cliente ID: ${clienteId}`);
-        
-        const query = `
-            SELECT m.*, a.nombre as tipo_animal
-            FROM tMascotas m
-            INNER JOIN tAnimales a ON m.animal_id = a.id
-            WHERE m.cliente_id = $1;
-        `;
-        
-        try {
-            const result = await pool.query(query, [clienteId]);
-            console.log(`[MODELO CLIENTE] Se encontraron ${result.rows.length} mascotas`);
-            return result.rows;
-        } catch (error) {
-            console.error('[MODELO CLIENTE] Error al buscar mascotas:', error);
             throw error;
         }
     }
