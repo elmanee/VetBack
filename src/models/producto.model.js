@@ -1,13 +1,13 @@
 const { pool } = require('../db/config');
 
 const ProductoModel = {
-    create: async ({ nombre, descripcion, precio_venta, unidad_medida }) => {
+    create: async ({ nombre, descripcion, precio_venta, unidad_medida, categoria  }) => {
         const query = `
-            INSERT INTO tProductos (nombre, descripcion, precio_venta, unidad_medida)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO tProductos (nombre, descripcion, precio_venta, unidad_medida, categoria)
+            VALUES ($1, $2, $3, $4, $5)
             RETURNING *;
         `;
-        const values = [nombre, descripcion, precio_venta, unidad_medida];
+        const values = [nombre, descripcion, precio_venta, unidad_medida, categoria];
 
         try {
             const result = await pool.query(query, values);

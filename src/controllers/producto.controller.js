@@ -3,37 +3,39 @@ const responseHandler = require('../utils/responseHandler');
 
 const ProductoController = {
     createProducto: async (req, res) => {
-        const { nombre, descripcion, precio_venta, unidad_medida } = req.body;
+        const { nombre, descripcion, precio_venta, unidad_medida, categoria } = req.body;
 
         if (!nombre || !precio_venta) {
             return responseHandler.error(
-                res, 
-                'Nombre y precio de venta son campos obligatorios.',
-                400
+            res,
+            'Nombre y precio de venta son campos obligatorios.',
+            400
             );
         }
 
         try {
-            const nuevoProducto = await ProductoModel.create({ 
-                nombre, 
-                descripcion, 
-                precio_venta, 
-                unidad_medida 
+            const nuevoProducto = await ProductoModel.create({
+            nombre,
+            descripcion,
+            precio_venta,
+            unidad_medida,
+            categoria
             });
+
             return responseHandler.success(
-                res,
-                nuevoProducto,
-                'Producto registrado con éxito.',
-                201
+            res,
+            nuevoProducto,
+            'Producto registrado con éxito.',
+            201
             );
         } catch (error) {
             return responseHandler.error(
-                res,
-                'Error interno del servidor al crear producto.',
-                500
+            res,
+            'Error interno del servidor al crear producto.',
+            500
             );
         }
-    },
+        },
 
     getAllProductos: async (req, res) => {
         try {
