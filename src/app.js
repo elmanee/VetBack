@@ -10,9 +10,11 @@ const productoRoutes = require('./routes/producto.routes');
 const loteRoutes = require('./routes/loteProducto.routes');
 const citaRoutes = require('./routes/cita.routes'); 
 const clienteRoutes = require('./routes/cliente.routes');
+const proveedorRoutes = require('./routes/proveedor.routes');
+
 
 app.use(cors({
-    origin: 'http://localhost:4200' // Solo permitimos peticiones desde la URL de Angular
+  origin: '*'
 }));
 
 // conexion a las rutas
@@ -20,5 +22,7 @@ app.use('/api/productos', productoRoutes);
 app.use('/api/lotes', loteRoutes);
 app.use('/api/citas', citaRoutes); 
 app.use('/api/clientes', clienteRoutes);
+app.use('/api/proveedores', proveedorRoutes);
+
 
 module.exports = app;

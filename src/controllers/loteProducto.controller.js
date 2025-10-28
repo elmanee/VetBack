@@ -139,7 +139,23 @@ const LoteProductoController = {
                 'Error interno del servidor al eliminar lote.'
             );
         }
-    }
+    },
+
+    getDetalleProductoYLote: async (req, res) => {
+        const { id } = req.params;
+
+        try {
+            const detalles = await LoteProductoModel.getDetalleProductoYLote(id);
+
+            if (!detalles || detalles.length === 0) {
+            return responseHandler.error(res, 'No se encontraron detalles para este producto.', 404);
+            }
+
+            return responseHandler.success(res, detalles, 'Detalles obtenidos correctamente.');
+        } catch (error) {
+            return responseHandler.error(res, 'Error interno del servidor al obtener los detalles.', 500);
+        }
+    },
 };
 
 module.exports = LoteProductoController;
