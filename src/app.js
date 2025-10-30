@@ -18,6 +18,8 @@ const proveedorRoutes = require('./routes/proveedor.routes');
 const categoriaRoutes = require('./routes/categoria.routes');
 const movimientoRoutes = require('./routes/movimiento.routes')
 const lotesRoutes = require('./routes/lote.routes');
+const authRoutes = require('./routes/auth.routes');
+
 
 
 app.use(cors({
@@ -37,6 +39,8 @@ app.use('/api/proveedores', proveedorRoutes);
 app.use('/api/categorias', categoriaRoutes);
 app.use('/api/movimientos', movimientoRoutes);
 app.use('/api/lotes', lotesRoutes)
+app.use('/api/auth', authRoutes);
+
 
 
 module.exports = app;
