@@ -15,6 +15,16 @@ const UsuarioModel = {
   async buscarPorCorreo(correo) {
     const result = await pool.query('SELECT * FROM tUsuarios WHERE correo = $1', [correo]);
     return result.rows[0];
+  },
+
+  async getVeterinarios() {
+    const query = `
+        SELECT id, nombre_completo, correo, telefono
+        FROM tUsuarios
+        WHERE rol = 'Veterinario' AND activo = true;
+    `;
+    const result = await pool.query(query);
+    return result.rows;
   }
 };
 
