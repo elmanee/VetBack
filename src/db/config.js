@@ -1,24 +1,26 @@
+require('dotenv').config(); 
 const { Pool } = require('pg');
 
+
 const pool = new Pool({
-  user: 'postgres',              
-  host: 'localhost',             
-  database: 'vet_db',            
-  password: process.env.DB_PASSWORD, 
-  port: 5432,                    
+  user: process.env.DB_USER || 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  database: process.env.DB_NAME || 'vet_db',
+  password: process.env.DB_PASSWORD || '',
+  port: process.env.DB_PORT || 5433,
 });
 
+
 async function connectDB() {
-    try {
-        console.log('conexion exitosa con la bd');
-    } catch (error) {
-        console.error('erro de conexion:', error.message);
-        // si hay error, detenemos la app
-        process.exit(1); 
-    }
+  try {
+    const client = await pool.connect();
+    console.log('Conexión exitosa con la base de datos PostgreSQL');
+    client.release();
+  } catch (error) {
+    console.error('Error de conexión:', error.message);
+    process.exit(1);
+  }
 }
 
-module.exports = {
-    pool,
-    connectDB
-};
+
+module.exports = { pool, connectDB };
