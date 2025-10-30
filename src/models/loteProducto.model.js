@@ -1,21 +1,42 @@
 const { pool } = require('../db/config');
 
 const LoteProductoModel = {
-    create: async ({ producto_id, num_lote, cantidad_inicial, cantidad_disponible, fecha_caducidad, proveedor_id }) => {
+    create: async ({
+        producto_id,
+        num_lote,
+        cantidad_inicial,
+        cantidad_disponible,
+        fecha_caducidad,
+        fecha_ingreso,
+        proveedor_id
+    }) => {
         const query = `
-            INSERT INTO tLotes (producto_id, num_lote, cantidad_inicial, cantidad_disponible, fecha_caducidad, proveedor_id)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING *;
-        `;
-        const values = [producto_id, num_lote, cantidad_inicial, cantidad_disponible, fecha_caducidad, proveedor_id];
+      INSERT INTO tlotes (
+        producto_id, 
+        num_lote, 
+        cantidad_inicial, 
+        cantidad_disponible, 
+        fecha_caducidad, 
+        fecha_ingreso, 
+        proveedor_id
+      )
+      VALUES ($1, $2, $3, $4, $5, COALESCE($6, CURRENT_DATE), $7)
+      RETURNING *;
+    `;
+
+        const values = [
+            producto_id,
+            num_lote,
+            cantidad_inicial,
+            cantidad_disponible ?? cantidad_inicial, 
+            fecha_caducidad,
+            fecha_ingreso,
+            proveedor_id
+        ];
 
         try {
-            if (cantidad_disponible === undefined) {
-                values[3] = cantidad_inicial;
-            }
-
             const result = await pool.query(query, values);
-            return result.rows[0]; 
+            return result.rows[0];
         } catch (error) {
             console.error("Error al registrar el lote:", error);
             if (error.code === '23503') {
@@ -74,7 +95,45 @@ const LoteProductoModel = {
             console.error(`Error al eliminar lote con ID ${id}:`, error);
             throw error;
         }
-    }
+    },
+
+
+    getDetalleProductoYLote: async (producto_id) => {
+        const query = `
+        SELECT 
+            p.id AS producto_id,
+            p.nombre AS producto_nombre,
+            p.descripcion,
+            p.precio_venta,
+            p.unidad_medida,
+            p.categoria,
+            l.id AS lote_id,
+            l.num_lote,
+            l.cantidad_inicial,
+            l.cantidad_disponible,
+            l.fecha_caducidad,
+            l.fecha_ingreso,
+            pr.nombre AS proveedor_nombre,
+            pr.contacto AS proveedor_contacto,
+            pr.telefono AS proveedor_telefono,
+            pr.correo AS proveedor_correo,
+            pr.direccion AS proveedor_direccion
+        FROM tLotes l
+        INNER JOIN tProductos p ON p.id = l.producto_id
+        LEFT JOIN tProveedores pr ON pr.id = l.proveedor_id
+        WHERE p.id = $1
+        ORDER BY l.fecha_ingreso DESC;
+        `;
+
+        try {
+        const result = await pool.query(query, [producto_id]);
+        return result.rows;
+        } catch (error) {
+        console.error('❌ Error en getDetalleProductoYLote (modelo):', error);
+        throw error;
+        }
+    },
+
 };
 
 module.exports = LoteProductoModel;

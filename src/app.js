@@ -14,9 +14,11 @@ const expedienteRoutes = require('./routes/expediente.routes');
 const consultaRoutes = require('./routes/consulta.routes');
 const reporteRoutes = require('./routes/pdf.routes');
 const path = require('path');
+const proveedorRoutes = require('./routes/proveedor.routes');
+
 
 app.use(cors({
-    origin: 'http://localhost:4200' // Solo permitimos peticiones desde la URL de Angular
+  origin: '*'
 }));
 
 // conexion a las rutas
@@ -28,6 +30,7 @@ app.use('/api/expedientes', expedienteRoutes);
 app.use('/api/consultas', consultaRoutes);
 app.use('/api/reportes', reporteRoutes);
 app.use('/reportes', express.static(path.join(__dirname, 'reportes')));
+app.use('/api/proveedores', proveedorRoutes);
 
 
 module.exports = app;
