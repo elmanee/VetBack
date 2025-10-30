@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const citaController = require('../controllers/cita.controller');
-
+const { confirmarCita } = require('../controllers/cita.controller');
 // RQF01 - Rutas RESTful para Citas
 
 router.route('/')
@@ -17,4 +17,6 @@ router.route('/:id')
     // DELETE /api/citas/:id -> Cancelar cita
     .delete(citaController.deleteCita);
 
+    router.get('/confirmar/:token', confirmarCita); // <-- NUEVA RUTA
+    
 module.exports = router;
