@@ -23,6 +23,10 @@ const usuarioRoutes = require('./routes/usuario.routes');
 
 
 
+const expedienteRoutes = require('./routes/expediente.routes');
+const consultaRoutes = require('./routes/consulta.routes');
+const reporteRoutes = require('./routes/pdf.routes');
+const path = require('path');
 
 app.use(cors({
   origin: '*'
@@ -41,10 +45,10 @@ app.use('/api/proveedores', proveedorRoutes);
 app.use('/api/categorias', categoriaRoutes);
 app.use('/api/movimientos', movimientoRoutes);
 app.use('/api/lotes', lotesRoutes)
-app.use('/api/auth', authRoutes);
-app.use('/api/usuarios', usuarioRoutes);
-
-
+app.use('/api/expedientes', expedienteRoutes);
+app.use('/api/consultas', consultaRoutes);
+app.use('/api/reportes', reporteRoutes);
+app.use('/reportes', express.static(path.join(__dirname, 'reportes')));
 
 
 module.exports = app;
