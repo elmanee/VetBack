@@ -3,7 +3,13 @@ const responseHandler = require('../utils/responseHandler');
 
 const MovimientoController = {
   createMovimiento: async (req, res) => {
-    const { tipo, producto_id, lote_id, cantidad, motivo, usuario_id = 1 } = req.body;
+    const { tipo, producto_id, lote_id, cantidad, motivo } = req.body;
+
+    const usuario_id = req.user?.id;
+
+    if (!usuario_id) {
+      return responseHandler.error(res, 'Usuario no autenticado.', 401);
+    }
 
     if (!tipo || !producto_id || !cantidad || !lote_id) {
       return responseHandler.error(res, 'Campos obligatorios faltantes', 400);
@@ -41,13 +47,13 @@ const MovimientoController = {
         const loteResult = await client.query(updateQuery, [cantidad, lote_id]);
         const loteActualizado = loteResult.rows[0];
         if (!loteActualizado) throw new Error('Lote no encontrado');
-
         if (loteActualizado.cantidad_disponible < 0) {
           throw new Error('Cantidad disponible no puede ser negativa.');
         }
       }
 
       await client.query('COMMIT');
+      console.log(`movimiento registrado por: ${req.user.correo} (${req.user.rol})`);
       return responseHandler.success(res, nuevoMovimiento, 'Movimiento registrado correctamente.', 201);
 
     } catch (error) {
@@ -62,18 +68,33 @@ const MovimientoController = {
   getAllMovimientos: async (req, res) => {
     try {
       const result = await pool.query(`
-        SELECT m.*, p.nombre AS producto_nombre, l.num_lote
+        SELECT 
+          m.id,
+          m.tipo,
+          m.cantidad,
+          m.motivo,
+          m.fecha AS fecha_movimiento,
+          p.nombre AS producto_nombre,
+          COALESCE(l.num_lote, '—') AS num_lote,
+          COALESCE(u.nombre_completo, 'Sistema') AS usuario_nombre
         FROM tMovimientos m
         LEFT JOIN tProductos p ON m.producto_id = p.id
         LEFT JOIN tLotes l ON m.lote_id = l.id
+        LEFT JOIN tUsuarios u ON m.usuario_id = u.id
         ORDER BY m.fecha DESC;
       `);
-      return responseHandler.success(res, result.rows, `Se encontraron ${result.rowCount} movimientos.`);
+
+      return responseHandler.success(
+        res,
+        result.rows,
+        `Se encontraron ${result.rowCount} movimientos.`
+      );
     } catch (error) {
       console.error('Error al obtener movimientos:', error);
       return responseHandler.error(res, 'Error interno al obtener movimientos.');
     }
   },
+
 
   
 };
