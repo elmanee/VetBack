@@ -82,7 +82,7 @@ const ProductoController = {
 
     updateProducto: async (req, res) => {
         const id = parseInt(req.params.id);
-        const data = req.body;
+        const data = { ...req.body };
 
         if (!id || Object.keys(data).length === 0) {
             return responseHandler.error(
@@ -116,7 +116,7 @@ const ProductoController = {
             500
             );
         }
-        },
+    },
 
 
     deleteProducto: async (req, res) => {
