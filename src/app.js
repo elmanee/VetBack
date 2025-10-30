@@ -10,6 +10,10 @@ const productoRoutes = require('./routes/producto.routes');
 const loteRoutes = require('./routes/loteProducto.routes');
 const citaRoutes = require('./routes/cita.routes'); 
 const clienteRoutes = require('./routes/cliente.routes');
+const expedienteRoutes = require('./routes/expediente.routes');
+const consultaRoutes = require('./routes/consulta.routes');
+const reporteRoutes = require('./routes/pdf.routes');
+const path = require('path');
 
 app.use(cors({
     origin: 'http://localhost:4200' // Solo permitimos peticiones desde la URL de Angular
@@ -20,5 +24,12 @@ app.use('/api/productos', productoRoutes);
 app.use('/api/lotes', loteRoutes);
 app.use('/api/citas', citaRoutes); 
 app.use('/api/clientes', clienteRoutes);
+app.use('/api/expedientes', expedienteRoutes);
+app.use('/api/consultas', consultaRoutes);
+app.use('/api/reportes', reporteRoutes);
+app.use('/reportes', express.static(path.join(__dirname, 'reportes')));
+
 
 module.exports = app;
+
+
