@@ -1,13 +1,13 @@
 const { pool } = require('../db/config');
 
 const ProductoModel = {
-    create: async ({ nombre, descripcion, precio_venta, unidad_medida, categoria  }) => {
+    create: async ({ nombre, descripcion, precio_venta, unidad_medida, categoria_id }) => {
         const query = `
-            INSERT INTO tProductos (nombre, descripcion, precio_venta, unidad_medida, categoria)
+            INSERT INTO tProductos (nombre, descripcion, precio_venta, unidad_medida, categoria_id)
             VALUES ($1, $2, $3, $4, $5)
             RETURNING *;
         `;
-        const values = [nombre, descripcion, precio_venta, unidad_medida, categoria];
+        const values = [nombre, descripcion, precio_venta, unidad_medida, categoria_id ];
 
         try {
             const result = await pool.query(query, values);
@@ -19,25 +19,29 @@ const ProductoModel = {
     },
 
     findAll: async () => {
-        const query = 'SELECT * FROM tProductos ORDER BY nombre ASC;';
-        try {
-            const result = await pool.query(query);
-            return result.rows;
-        } catch (error) {
-            console.error("Error al obtener todos los productos:", error);
-            throw error;
-        }
+        const query = `
+        SELECT 
+            p.*, 
+            c.nombre AS categoria
+        FROM tProductos p
+        LEFT JOIN tCategoriaProductos c ON p.categoria_id = c.id
+        ORDER BY p.nombre ASC;
+        `;
+        const result = await pool.query(query);
+        return result.rows;
     },
 
     findById: async (id) => {
-        const query = 'SELECT * FROM tProductos WHERE id = $1;';
-        try {
-            const result = await pool.query(query, [id]);
-            return result.rows[0];
-        } catch (error) {
-            console.error(`Error al buscar producto con ID ${id}:`, error);
-            throw error;
-        }
+        const query = `
+        SELECT 
+            p.*, 
+            c.nombre AS categoria
+        FROM tProductos p
+        LEFT JOIN tCategoriaProductos c ON p.categoria_id = c.id
+        WHERE p.id = $1;
+        `;
+        const result = await pool.query(query, [id]);
+        return result.rows[0];
     },
 
     update: async (id, data) => {
@@ -46,40 +50,29 @@ const ProductoModel = {
         let paramIndex = 1;
 
         for (const key in data) {
-            fields.push(`${key} = $${paramIndex++}`);
-            values.push(data[key]);
+        fields.push(`${key} = $${paramIndex++}`);
+        values.push(data[key]);
         }
 
-        if (fields.length === 0) {
-            return null; 
-        }
+        if (fields.length === 0) return null;
 
         values.push(id);
         const query = `
-            UPDATE tProductos SET ${fields.join(', ')}
-            WHERE id = $${paramIndex}
-            RETURNING *;
+        UPDATE tProductos 
+        SET ${fields.join(', ')} 
+        WHERE id = $${paramIndex}
+        RETURNING *;
         `;
-        
-        try {
-            const result = await pool.query(query, values);
-            return result.rows[0];
-        } catch (error) {
-            console.error(`Error al actualizar producto con ID ${id}:`, error);
-            throw error;
-        }
+
+        const result = await pool.query(query, values);
+        return result.rows[0];
     },
 
     // D - DELETE
     remove: async (id) => {
         const query = 'DELETE FROM tProductos WHERE id = $1 RETURNING *;';
-        try {
-            const result = await pool.query(query, [id]);
-            return result.rows[0]; 
-        } catch (error) {
-            console.error(`Error al eliminar producto con ID ${id}:`, error);
-            throw error;
-        }
+        const result = await pool.query(query, [id]);
+        return result.rows[0];
     }
 };
 

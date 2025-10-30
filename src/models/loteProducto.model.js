@@ -106,30 +106,26 @@ const LoteProductoModel = {
             p.descripcion,
             p.precio_venta,
             p.unidad_medida,
-            p.categoria,
+            c.nombre AS categoria_nombre,  
             l.id AS lote_id,
             l.num_lote,
             l.cantidad_inicial,
             l.cantidad_disponible,
             l.fecha_caducidad,
             l.fecha_ingreso,
-            pr.nombre AS proveedor_nombre,
-            pr.contacto AS proveedor_contacto,
-            pr.telefono AS proveedor_telefono,
-            pr.correo AS proveedor_correo,
-            pr.direccion AS proveedor_direccion
-        FROM tLotes l
-        INNER JOIN tProductos p ON p.id = l.producto_id
-        LEFT JOIN tProveedores pr ON pr.id = l.proveedor_id
-        WHERE p.id = $1
-        ORDER BY l.fecha_ingreso DESC;
+            pr.nombre AS proveedor_nombre
+        FROM tProductos p
+        JOIN tLotes l ON p.id = l.producto_id
+        LEFT JOIN tCategoriaProductos c ON p.categoria_id = c.id
+        LEFT JOIN tProveedores pr ON l.proveedor_id = pr.id
+        WHERE p.id = $1;
         `;
 
         try {
         const result = await pool.query(query, [producto_id]);
         return result.rows;
         } catch (error) {
-        console.error('❌ Error en getDetalleProductoYLote (modelo):', error);
+        console.error('Error en getDetalleProductoYLote (modelo):', error);
         throw error;
         }
     },

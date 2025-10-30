@@ -3,7 +3,7 @@ const responseHandler = require('../utils/responseHandler');
 
 const ProductoController = {
     createProducto: async (req, res) => {
-        const { nombre, descripcion, precio_venta, unidad_medida, categoria } = req.body;
+        const { nombre, descripcion, precio_venta, unidad_medida, categoria_id  } = req.body;
 
         if (!nombre || !precio_venta) {
             return responseHandler.error(
@@ -19,7 +19,7 @@ const ProductoController = {
             descripcion,
             precio_venta,
             unidad_medida,
-            categoria
+            categoria_id 
             });
 
             return responseHandler.success(
@@ -82,31 +82,42 @@ const ProductoController = {
 
     updateProducto: async (req, res) => {
         const id = parseInt(req.params.id);
-        const data = req.body;
+        const data = { ...req.body };
+
+        if (!id || Object.keys(data).length === 0) {
+            return responseHandler.error(
+            res,
+            'Debe proporcionar al menos un campo para actualizar.',
+            400
+            );
+        }
 
         try {
             const productoActualizado = await ProductoModel.update(id, data);
 
             if (!productoActualizado) {
-                const message = Object.keys(data).length === 0 
-                    ? 'No hay datos para actualizar.' 
-                    : `Producto con ID ${id} no encontrado.`;
-                
-                return responseHandler.error(res, message, 404);
-            }
-            
-            return responseHandler.success(
-                res,
-                productoActualizado,
-                'Producto actualizado con éxito.'
-            );
-        } catch (error) {
             return responseHandler.error(
                 res,
-                'Error interno del servidor al actualizar producto.'
+                `No se encontró producto con ID ${id}.`,
+                404
+            );
+            }
+
+            return responseHandler.success(
+            res,
+            productoActualizado,
+            'Producto actualizado con éxito.'
+            );
+        } catch (error) {
+            console.error('error', error);
+            return responseHandler.error(
+            res,
+            'Error interno del servidor al actualizar el producto.',
+            500
             );
         }
     },
+
 
     deleteProducto: async (req, res) => {
         const id = parseInt(req.params.id);
