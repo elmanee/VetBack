@@ -40,4 +40,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/alertas', alertaRoutes);
 
+app.use('/api/expedientes-test', require('./routes/expediente.routes'));
+
+
+
+
+
 module.exports = app;
+
+
