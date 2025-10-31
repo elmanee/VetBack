@@ -347,6 +347,21 @@ const deleteCita = async (req, res) => {
         return responseHandler.error(res, `Error al cancelar la cita: ${error.message}`, 500);
     }
 };
+const getCitasByVeterinario = async (req, res) => {
+  try {
+    // El ID del veterinario vendrá en el token o en los params
+    const veterinarioId = req.user?.id || req.params.id;
+
+    console.log(`[CONTROLADOR CITA] Buscando citas del veterinario ID: ${veterinarioId}`);
+
+    const citas = await CitaModel.findByVeterinario(veterinarioId);
+
+    return responseHandler.success(res, citas, 'Citas del veterinario obtenidas correctamente.');
+  } catch (error) {
+    console.error('[CONTROLADOR CITA] Error al obtener citas por veterinario:', error);
+    return responseHandler.error(res, 'Error al obtener las citas del veterinario.', 500);
+  }
+};
 
 // Exportar todas las funciones
 module.exports = {
@@ -354,6 +369,7 @@ module.exports = {
     getAllCitas,
     updateCita,
     deleteCita,
-    confirmarCita // <-- NUEVA FUNCIÓN EXPORTADA
+    confirmarCita, // <-- NUEVA FUNCIÓN EXPORTADA
+    getCitasByVeterinario
 };
 

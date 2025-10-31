@@ -3,6 +3,11 @@ const express = require('express');
 const router = express.Router();
 const citaController = require('../controllers/cita.controller');
 const { confirmarCita } = require('../controllers/cita.controller');
+const verifyToken = require('../middleware/auth.middleware');
+const checkRole = require('../middleware/role.middleware');
+
+router.use(verifyToken);
+
 // RQF01 - Rutas RESTful para Citas
 
 router.route('/')
@@ -18,5 +23,7 @@ router.route('/:id')
     .delete(citaController.deleteCita);
 
     router.get('/confirmar/:token', confirmarCita); // <-- NUEVA RUTA
+
+router.get('/veterinario/:id', checkRole(['Veterinario']), citaController.getCitasByVeterinario);
     
 module.exports = router;
