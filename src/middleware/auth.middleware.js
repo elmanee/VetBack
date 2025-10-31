@@ -12,7 +12,10 @@ const verifyToken = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; 
+<<<<<<< HEAD
     console.log('token recibido y decodificado:', decoded);
+=======
+>>>>>>> 81fbbd2 (login con jwt y barrer)
     next();
   } catch (err) {
     return res.status(403).json({ message: 'Token inválido o expirado.' });

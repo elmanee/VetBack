@@ -19,8 +19,11 @@ const categoriaRoutes = require('./routes/categoria.routes');
 const movimientoRoutes = require('./routes/movimiento.routes')
 const lotesRoutes = require('./routes/lote.routes');
 const authRoutes = require('./routes/auth.routes');
+<<<<<<< HEAD
 const usuarioRoutes = require('./routes/usuario.routes');
 
+=======
+>>>>>>> 81fbbd2 (login con jwt y barrer)
 
 
 const expedienteRoutes = require('./routes/expediente.routes');
