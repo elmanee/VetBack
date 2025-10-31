@@ -7,6 +7,7 @@ const UsuarioModel = require('../models/usuario.model');
 
 // Función  para  la notificación
 const enviarNotificacion = async (cita, tipo = 'CONFIRMACIÓN') => {
+// ... (código existente sin cambios) ...
     console.info("---------------------------------------------------------------------");
     console.info(`ENVIANDO ${tipo} (RQF01) para Cita ID ${cita.id_cita}`);
     
@@ -31,9 +32,9 @@ const enviarNotificacion = async (cita, tipo = 'CONFIRMACIÓN') => {
         }
         
         if (resultado.success) {
-            console.info(`✅ Notificación enviada exitosamente a ${cliente.correo}`);
+            console.info(`Notificación enviada exitosamente a ${cliente.correo}`);
         } else {
-            console.error(`❌ Error al enviar notificación: ${resultado.error}`);
+            console.error(`Error al enviar notificación: ${resultado.error}`);
         }
     } catch (error) {
         console.error('[CONTROLADOR CITA] Error al enviar notificación:', error);
@@ -46,6 +47,7 @@ const enviarNotificacion = async (cita, tipo = 'CONFIRMACIÓN') => {
 // POST /api/citas - Registrar nueva cita
 // ============================================
 const createCita = async (req, res) => {
+// ... (código existente sin cambios) ...
     console.log('[CONTROLADOR CITA] Iniciando registro de cita...');
     console.log('[CONTROLADOR CITA] Datos recibidos:', req.body);
     
@@ -165,28 +167,30 @@ const confirmarCita = async (req, res) => {
         if (citaConfirmada) {
             console.log(`[CONTROLADOR CITA] Cita ID ${citaConfirmada.id_cita} confirmada!`);
             
-            // Podrías enviar una notificación final o un correo de "Cita Confirmada" aquí si lo deseas.
-            
-            // RQF02 - Respuesta al cliente que hace clic en el enlace
+            // RQF02 - Respuesta al cliente (DISEÑO ACTUALIZADO)
             return res.send(`
                 <!DOCTYPE html>
                 <html>
                 <head>
                     <title>Confirmación Exitosa</title>
                     <style>
-                        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #f0fdf4; color: #15803d; }
-                        .container { max-width: 500px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-top: 5px solid #4ade80; }
-                        h1 { color: #15803d; }
+                        /* Fondo color crema claro y texto oscuro, usando tu paleta */
+                        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #FFFBF5; color: #333333; }
+                        /* Borde superior con tu color primario (amarillo) */
+                        .container { max-width: 500px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-top: 5px solid #FFD95A; }
+                        h1 { color: #333333; }
                         .date { font-size: 1.1em; font-weight: bold; margin-top: 15px; }
+                        /* Botón con tu estilo primario (amarillo, texto oscuro) */
                         .button { display: inline-block; padding: 10px 20px; background-color: #FFD95A; color: #333; text-decoration: none; border-radius: 5px; margin-top: 20px; font-weight: bold; }
                     </style>
                 </head>
                 <body>
                     <div class="container">
-                        <h1>✅ ¡Tu cita ha sido confirmada con éxito!</h1>
+                        <h1>¡Tu cita ha sido confirmada con éxito!</h1>
                         <p>Hemos ratificado tu reserva en nuestro sistema.</p>
                         <div class="date">Fecha: ${citaConfirmada.fecha_cita} | Hora: ${citaConfirmada.hora_cita}</div>
-                        <p>Te esperamos en Pet Health+.</p>
+                        <!-- Nombre de la veterinaria actualizado -->
+                        <p>Te esperamos en Veterinaria "El Morralito".</p>
                         <a href="http://localhost:4200/" class="button">Volver a la web principal</a>
                     </div>
                 </body>
@@ -195,21 +199,27 @@ const confirmarCita = async (req, res) => {
             
         } else {
             console.log('[CONTROLADOR CITA] Confirmación fallida: Token inválido o cita ya procesada.');
+            
+            // RQF02 - Respuesta de error (DISEÑO ACTUALIZADO)
             return res.status(400).send(`
                 <!DOCTYPE html>
                 <html>
                 <head>
                     <title>Error de Confirmación</title>
                     <style>
-                        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #fef2f2; color: #b91c1c; }
-                        .container { max-width: 500px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-top: 5px solid #f87171; }
-                        h1 { color: #b91c1c; }
+                        /* Fondo color crema claro y texto oscuro */
+                        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #FFFBF5; color: #333333; }
+                        /* Borde superior con tu color de peligro (rojo) */
+                        .container { max-width: 500px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-top: 5px solid #E74C3C; }
+                        /* Texto de error con el color de peligro */
+                        h1 { color: #E74C3C; }
+                        /* Botón con tu estilo primario (amarillo) */
                         .button { display: inline-block; padding: 10px 20px; background-color: #FFD95A; color: #333; text-decoration: none; border-radius: 5px; margin-top: 20px; font-weight: bold; }
                     </style>
                 </head>
                 <body>
                     <div class="container">
-                        <h1>❌ Error al confirmar la cita</h1>
+                        <h1>Error al confirmar la cita</h1>
                         <p>El enlace de confirmación es inválido, ha expirado, o la cita ya fue confirmada o cancelada previamente.</p>
                         <p>Por favor, contacte a la clínica si necesita ayuda.</p>
                         <a href="http://localhost:4200/" class="button">Volver a la web principal</a>
@@ -221,7 +231,28 @@ const confirmarCita = async (req, res) => {
         
     } catch (error) {
         console.error('[CONTROLADOR CITA] Error al confirmar cita:', error.message);
-        return responseHandler.error(res, 'Error interno al confirmar la cita.', 500);
+        return res.status(500).send(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Error del Servidor</title>
+                <style>
+                    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #FFFBF5; color: #333333; }
+                    .container { max-width: 500px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-top: 5px solid #E74C3C; }
+                    h1 { color: #E74C3C; }
+                    .button { display: inline-block; padding: 10px 20px; background-color: #FFD95A; color: #333; text-decoration: none; border-radius: 5px; margin-top: 20px; font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>Error del Servidor</h1>
+                    <p>Ocurrió un error inesperado al procesar tu solicitud.</p>
+                    <p>Por favor, intente más tarde o contacte a la clínica.</p>
+                    <a href="http://localhost:4200/" class="button">Volver a la web principal</a>
+                </div>
+            </body>
+            </html>
+        `);
     }
 };
 
@@ -230,6 +261,7 @@ const confirmarCita = async (req, res) => {
 // GET /api/citas - Obtener todas las citas
 // ============================================
 const getAllCitas = async (req, res) => {
+// ... (código existente sin cambios) ...
     console.log('[CONTROLADOR CITA] Obteniendo todas las citas...');
     
     try {
@@ -253,6 +285,7 @@ const getAllCitas = async (req, res) => {
 // ... (updateCita y deleteCita se mantienen iguales) ...
 
 const updateCita = async (req, res) => {
+// ... (código existente sin cambios) ...
     console.log('[CONTROLADOR CITA] Iniciando actualización de cita...');
     const { id } = req.params;
     const { fecha_cita, hora_cita, veterinario_id } = req.body;
@@ -313,6 +346,7 @@ const updateCita = async (req, res) => {
 // DELETE /api/citas/:id - Cancelar cita
 // ============================================
 const deleteCita = async (req, res) => {
+// ... (código existente sin cambios) ...
     console.log('[CONTROLADOR CITA] Iniciando cancelación de cita...');
     const { id } = req.params;
     
@@ -372,4 +406,3 @@ module.exports = {
     confirmarCita, // <-- NUEVA FUNCIÓN EXPORTADA
     getCitasByVeterinario
 };
-

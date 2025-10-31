@@ -1,11 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const usuarioController = require('../controllers/usuario.controller');
+// ¡ARREGLO! Faltaba importar el controlador
+const UsuarioController = require('../controllers/usuario.controller'); 
 const verifyToken = require('../middleware/auth.middleware');
-const checkRole = require('../middleware/role.middleware');
 
-router.use(verifyToken);
-
-router.get('/:id', checkRole(['Admin']), usuarioController.getUsuarioById);
+// Ruta para obtener solo los veterinarios
+// GET /api/usuarios/veterinarios
+router.get(
+  '/veterinarios',
+  verifyToken, // ¡Ruta protegida!
+  UsuarioController.getVeterinarios
+);
 
 module.exports = router;
+
