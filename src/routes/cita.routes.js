@@ -2,14 +2,17 @@
 const express = require('express');
 const router = express.Router();
 const citaController = require('../controllers/cita.controller');
-const { confirmarCita } = require('../controllers/cita.controller');
 const verifyToken = require('../middleware/auth.middleware');
 const checkRole = require('../middleware/role.middleware');
 
+// ⭐ IMPORTANTE: Esta ruta debe estar ANTES del verifyToken
+// porque es accedida desde un enlace público en el email
+router.get('/confirmar/:token', citaController.confirmarCita);
+
+// Ahora sí, aplicar autenticación a las demás rutas
 router.use(verifyToken);
 
 // RQF01 - Rutas RESTful para Citas
-
 router.route('/')
     // GET /api/citas -> Consulta de agenda/calendario
     .get(citaController.getAllCitas)
@@ -22,8 +25,6 @@ router.route('/:id')
     // DELETE /api/citas/:id -> Cancelar cita
     .delete(citaController.deleteCita);
 
-    router.get('/confirmar/:token', confirmarCita); // <-- NUEVA RUTA
-
 router.get('/veterinario/:id', checkRole(['Veterinario']), citaController.getCitasByVeterinario);
-    
+
 module.exports = router;
