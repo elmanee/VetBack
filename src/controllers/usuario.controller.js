@@ -1,5 +1,7 @@
 const { pool } = require('../db/config');
 const responseHandler = require('../utils/responseHandler');
+const UsuarioModel = require('../models/usuario.model'); 
+
 
 const UsuarioController = {
   getUsuarioById: async (req, res) => {
@@ -22,7 +24,26 @@ const UsuarioController = {
       console.error('Error al obtener usuario por ID:', error);
       return responseHandler.error(res, 'Error interno al obtener el usuario');
     }
+  },
+  /**
+   * Obtiene todos los usuarios con rol 'Veterinario'
+   */
+  getVeterinarios: async (req, res) => {
+    try {
+      // ¡ARREGLO! Ahora llama a la función correcta del modelo
+      const veterinarios = await UsuarioModel.findByRole('Veterinario'); 
+      return responseHandler.success(
+        res,
+        veterinarios,
+        `Se encontraron ${veterinarios.length} veterinarios.`
+      );
+    } catch (error) {
+      console.error("[CONTROLADOR USUARIO] Error al obtener veterinarios:", error);
+      return responseHandler.error(res, 'Error interno al obtener veterinarios.');
+    }
   }
+
+
 };
 
 module.exports = UsuarioController;

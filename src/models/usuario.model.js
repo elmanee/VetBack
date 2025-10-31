@@ -11,20 +11,30 @@ const UsuarioModel = {
     const result = await pool.query(query, values);
     return result.rows[0];
   },
-
+  
   async buscarPorCorreo(correo) {
     const result = await pool.query('SELECT * FROM tUsuarios WHERE correo = $1', [correo]);
     return result.rows[0];
   },
-
-  async getVeterinarios() {
+  
+  /**
+   * Busca usuarios por su rol.
+   * Usado para cargar la lista de veterinarios en la agenda.
+   */
+  findByRole: async (rol) => {
     const query = `
-        SELECT id, nombre_completo, correo, telefono
-        FROM tUsuarios
-        WHERE rol = 'Veterinario' AND activo = true;
+      SELECT id, nombre_completo, correo, rol
+      FROM tUsuarios
+      WHERE rol = $1 AND activo = true
+      ORDER BY nombre_completo ASC;
     `;
-    const result = await pool.query(query);
-    return result.rows;
+    try {
+      const result = await pool.query(query, [rol]);
+      return result.rows;
+    } catch (error) {
+      console.error(`[MODELO USUARIO] Error al buscar por rol ${rol}:`, error);
+      throw error;
+    }
   }
 };
 
