@@ -5,7 +5,7 @@ const pool = new Pool({
   host: 'localhost',             
   database: 'vet_db',            
   password: process.env.DB_PASSWORD, 
-  port: 5432,                    
+  port: 5433,                    
 });
 
 async function connectDB() {

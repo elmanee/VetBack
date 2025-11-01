@@ -40,6 +40,22 @@ const PacienteModel = {
     ]);
     return result.rows[0];
   },
+
+  // Nuevos métodos para mejor performance
+  async findByClienteId(clienteId) {
+    const query = `SELECT * FROM tPacientes WHERE cliente_id = $1 ORDER BY nombre;`;
+    const result = await pool.query(query, [clienteId]);
+    return result.rows;
+  },
+
+  async findByClienteAndNombre(clienteId, nombre) {
+    const query = `
+      SELECT * FROM tPacientes 
+      WHERE cliente_id = $1 AND LOWER(nombre) = LOWER($2);
+    `;
+    const result = await pool.query(query, [clienteId, nombre]);
+    return result.rows[0];
+  }
 };
 
 module.exports = PacienteModel;

@@ -23,6 +23,7 @@ const lotesRoutes = require('./routes/lote.routes');
 const authRoutes = require('./routes/auth.routes');
 const usuarioRoutes = require('./routes/usuario.routes');
 const alertaRoutes = require('./routes/alerta.routes');
+const pacienteRoutes = require('./routes/paciente.routes');
 
 // Conexión a las rutas
 app.use('/api/productos', productoRoutes); 
@@ -39,6 +40,7 @@ app.use('/api/lotes', lotesRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/alertas', alertaRoutes);
+app.use('/api/pacientes', pacienteRoutes);
 
 app.use('/api/expedientes-test', require('./routes/expediente.routes'));
 
