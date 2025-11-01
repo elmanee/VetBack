@@ -195,17 +195,28 @@ const CitaModel = {
 
     async findByVeterinario(veterinarioId) {
         const query = `
-            SELECT 
-            c.id_cita, c.fecha_cita, c.hora_cita, c.motivo, c.estado,
-            cl.nombre_completo AS cliente_nombre,
-            p.nombre AS mascota_nombre,
-            a.nombre AS animal_nombre
-            FROM tcitas c
-            JOIN tclientes cl ON c.cliente_id = cl.id
-            LEFT JOIN tpacientes p ON c.mascota_id = p.id
-            JOIN tanimales a ON c.animal_id = a.id_tipoanimal
-            WHERE c.veterinario_id = $1
-            ORDER BY c.fecha_cita, c.hora_cita;
+SELECT 
+    c.id_cita,
+    c.cliente_id,
+    c.mascota_id,
+    c.veterinario_id,
+    c.animal_id,
+    c.fecha_cita,
+    c.hora_cita,
+    c.motivo,
+    c.estado,
+    c.created_at,
+    c.token_confirmacion,
+    cl.nombre_completo AS cliente_nombre,
+    p.nombre AS mascota_nombre,
+    a.nombre AS animal_nombre
+FROM tcitas c
+JOIN tclientes cl ON c.cliente_id = cl.id
+LEFT JOIN tpacientes p ON c.mascota_id = p.id
+JOIN tanimales a ON c.animal_id = a.id_tipoanimal
+WHERE c.veterinario_id = $1
+ORDER BY c.fecha_cita, c.hora_cita;
+
         `;
         const result = await pool.query(query, [veterinarioId]);
         return result.rows;
